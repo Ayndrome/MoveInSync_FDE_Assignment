@@ -1,11 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the MoveInSync review-analysis PDF from cleaned_reviews.xlsx.
 
-Install: pip install pandas openpyxl matplotlib reportlab
-Run:     python generate_moveinsync_report.py cleaned_reviews.xlsx [output.pdf]
-
-Edit COLORS, FONT_* and typography values below to customize the report.
-"""
 import sys, re
 from pathlib import Path
 import pandas as pd
@@ -19,8 +13,7 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, Tabl
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 
-# -------------------- DESIGN SETTINGS: EDIT THESE --------------------
-# Updated to a modern black, slate, and grey corporate palette
+
 COLORS = {
     "primary": "#000000",    # Near Black (Titles, H1, Table Headers)
     "secondary": "#475569",  # Slate (H2, Callout text)
@@ -32,14 +25,12 @@ COLORS = {
     "row_alt": "#F9FAFB",    # Faint Grey (Table alternate rows)
     "white": "#FFFFFF",
 }
-# Optional .ttf font paths. Example Ubuntu path:
-# /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf
+
 FONT_REGULAR = None
 FONT_BOLD = None
 FONT_ITALIC = None
 REPORT_DATE = "12 October 2026"
 CHART_FILENAME = "moveinsync_issue_distribution.png"
-# --------------------------------------------------------------------
 
 def esc(x):
     if pd.isna(x): return ""
@@ -58,7 +49,7 @@ def build_report(xlsx, output_pdf):
     C = {k: colors.HexColor(v) for k, v in COLORS.items()}
     S = getSampleStyleSheet()
     
-    # Modernized typography: balanced sizes and leading
+
     defs = [
         ("CoverTitle", "Title", BOLD, 26, 32, C["primary"], 12),
         ("SubtitleCustom", "Normal", BODY, 12, 18, C["muted"], 10),
@@ -76,7 +67,6 @@ def build_report(xlsx, output_pdf):
             leading=leading, textColor=color, spaceAfter=after, alignment=TA_LEFT,
             keepWithNext=name in ("Section", "Subsection")))
             
-    # Fixed Callout: Removed borders, applied soft grey background, and added left/right indents
     S.add(ParagraphStyle(name="Callout", parent=S["BodyText"], fontName=BODY, fontSize=10.5,
         leading=16, textColor=C["secondary"], backColor=C["pale"], 
         borderPadding=14, spaceBefore=10, spaceAfter=14, leftIndent=12, rightIndent=12))
@@ -105,7 +95,6 @@ def build_report(xlsx, output_pdf):
     chart_path = Path(output_pdf).parent / CHART_FILENAME
     chart_data = counts.head(10).sort_values()
     
-    # Updated Chart: Slate color palette and clean, modern aesthetics
     fig, ax = plt.subplots(figsize=(6.7, 4.0)) 
     bars = ax.barh(chart_data.index.str.replace("_"," "), chart_data.values, color=COLORS["chart"])
     ax.set_xlabel("Reviews (confirmed duplicate excluded)", fontsize=9, color=COLORS["muted"], labelpad=10) 
@@ -223,3 +212,4 @@ if __name__ == "__main__":
     input_file=Path(sys.argv[1]).expanduser()
     output_file=Path(sys.argv[2]).expanduser() if len(sys.argv)>2 else Path("MoveInSync_Review_Analysis_and_Recommendations.pdf")
     build_report(input_file,output_file)
+
