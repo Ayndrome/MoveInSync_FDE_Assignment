@@ -31,7 +31,7 @@ The report prioritizes improving trip tracking and location accuracy, investigat
 - AI-assisted analysis and report preparation
 
 ## Repository Contents
-- `scripts/` — Python script used to generate the report
+- `report_script.py` — Python script used to generate the report
 
 ## Limitations
 This analysis uses a sample of one-star reviews and may not represent the experience of all MoveInSync users. The identified complaints indicate reported symptoms and do not independently establish their underlying technical causes.
